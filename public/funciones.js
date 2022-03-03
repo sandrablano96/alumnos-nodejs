@@ -28,7 +28,7 @@ function getAbsolutePath() {
 
 function cargaAlumnos() {
     let tabla = document.getElementById("tablaAlumnos");
-    fetch(getAbsolutePath()+'alumnos')
+    fetch(getAbsolutePath()+'alumnos)
             .then(response => response.json())
             .then(json => {
                 console.log(json);

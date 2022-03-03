@@ -5,16 +5,28 @@ const AlumnoSchema = mongoose.Schema(
         type:String,
         required: [true,'El nombre es obligatorio']
     }, 
-    apellido: {
+    apellidos: {
         type:String,
         required: [true,'El apellido es obligatorio']
     }, 
+    email: {
+        type:String,
+        required: [true,'El email es obligatorio']
+    }, 
+    password:{
+        type:String,
+        required: [true,'La contraseña es obligatoria']
+    },
     asignatura: {
         type:String,
     }, 
     imagen: {
         type:String,
     }, 
+    google: {
+        type: Boolean,
+        default:true
+    }
 }
 )
 
