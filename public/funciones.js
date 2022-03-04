@@ -15,8 +15,10 @@ function abrirInsertar(){
     document.getElementById("divId").classList.add("oculto");
     
     document.getElementById("nombre").value = "";
-    document.getElementById("apellido").value = "";
+    document.getElementById("apellidos").value = "";
     document.getElementById("asignatura").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("password").value = "";
 }
 
 function getAbsolutePath() {
@@ -25,10 +27,17 @@ function getAbsolutePath() {
     return loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length));
 }
 
+const myHeaders = new Headers();
+
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('x-token', localStorage.getItem("token"));
 
 function cargaAlumnos() {
     let tabla = document.getElementById("tablaAlumnos");
-    fetch(getAbsolutePath()+'alumnos)
+ 
+    fetch(getAbsolutePath()+'alumnos/', {
+        headers: myHeaders
+    })
             .then(response => response.json())
             .then(json => {
                 console.log(json);
@@ -96,7 +105,9 @@ function cargaAlumnos() {
 }
 
 function cargaAlumnoPorId(id) {
-    fetch(getAbsolutePath()+'alumno/' + id)
+    fetch(getAbsolutePath()+'alumno/' + id, {
+        headers: myHeaders
+    })
             .then(response => response.json())
             .then(json => {
                 console.log(json);
@@ -122,9 +133,7 @@ function actualizaAlumno() {
             apellido: document.getElementById("apellido").value,
             asignatura: document.getElementById("asignatura").value,
         }),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        },
+        headers: myHeaders,
     })
             .then((response) => response.json())
             .then((json) => console.log(json));
@@ -136,12 +145,12 @@ function insertaAlumno() {
         method: 'POST',
         body: JSON.stringify({
             nombre: document.getElementById("nombre").value,
-            apellido: document.getElementById("apellido").value,
+            apellidos: document.getElementById("apellidos").value,
+            email:document.getElementById("email").value,
+            password:document.getElementById("password").value,
             asignatura: document.getElementById("asignatura").value,
         }),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        },
+        headers: myHeaders,
     })
             .then((response) => response.json())
             .then((json) => console.log(json));
@@ -151,7 +160,9 @@ function insertaAlumno() {
 
 function borraAlumnoPorId(id) {
     fetch(getAbsolutePath()+'alumno/' + id, {
+        
         method: 'DELETE',
+        headers:myHeaders
     });
     cargaAlumnos();
     

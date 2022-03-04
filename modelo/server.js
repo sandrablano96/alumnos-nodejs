@@ -134,6 +134,8 @@ class Server{
         this.app.post('/alumno',
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
         check('apellidos', 'El apellido es obligatorio').not().isEmpty(),
+        check('email', 'El email es obligatorio').isEmail().not().isEmpty(),
+        check('password', 'La contraseña es obligatoria').not().isEmpty(),
          async function(req,res){
             
             const body = req.body;
@@ -144,9 +146,13 @@ class Server{
                 return res.status(400).json({"msg": errorVal.array()})
                 //"msg":errorVal.array(); devuelve informacion de los errores
             } 
-            let alumno = new Alumno(body);
+            let alumno = new Alumno();
             const salt = bcryptjs.genSaltSync();
-                alumno.password = bcryptjs.hashSync(alumno.password, salt)
+            alumno.nombre = body.nombre;
+            alumno.apellidos = body.apellidos;
+            alumno.email = body.email;
+            alumno.asignatura = body.asignatura;
+            alumno.password = bcryptjs.hashSync(body.password, salt)
             alumno.save();
             res.json({
                 insertado:true,
@@ -173,8 +179,41 @@ class Server{
                 borrado:true
             })
         });
-    }
+    
 
+    this.app.post("/subir", async function (req, res) {
+        if (!req.files) {
+            res.status(400).json({
+                msg: "No se ha seleccionado un archivo"
+            });
+            return;
+        }
+        //esperamos un archivo con el nombre archivo
+        if (!req.files.imagen) {
+            res.status(400).json({
+                msg: "No se ha seleccionado un archivo con nombre 'archivo'"
+            });
+        } else {
+            const imagen = req.files.imagen;
+            let path = require('path');
+            const nombreCortado = imagen.name.split('.');
+            const extension = nombreCortado[nombreCortado.length - 1];
+            const extensionesValidas = ['jpg', 'png', 'jpeg'];
+            if (!extensionesValidas.includes(extension)) {
+                return res.status(400).json({
+                    msg: `La extension ${extension} no es valida`
+                })
+            }
+            let uploadPath = path.join(__dirname, '../img', imagen.name);
+            imagen.mv(uploadPath, function (err) {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.send('Subido correctamente');
+            });
+        }
+    });
+}
     listen(){
         this.app.listen(port, function() { 
             console.log('Escuchando el puerto',port)});
