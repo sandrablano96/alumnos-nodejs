@@ -1,77 +1,141 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <style>
-            table button {
-                width:100%;
-            }
-            table tr td:nth-child(5), table tr td:nth-child(6){
-                width: 10%;
-            }
-            .oculto {
-                display: none;
-            }
-            
-            form {
-                display:none
-            }
-            .botones {
-                margin: 1rem;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Gestion de alumnos</h1>
+  <head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <style>
+      table button {
+        width: 100%;
+      }
+      table tr td:nth-child(5),
+      table tr td:nth-child(6) {
+        width: 10%;
+      }
+      .oculto {
+        display: none;
+      }
+
+      form {
+        display: none;
+      }
+      .botones {
+        margin: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Gestion de alumnos</h1>
+    <div class="row">
+      <div class="col-6">
         <div class="botones">
-            <button id="cargarAlumnos" class="btn btn-primary">Cargar alumnos</button>
-            <button type="button" class="btn btn-primary" id="abrirInsertar">Insertar nuevo</button>
+          <button id="cargarAlumnos" class="btn btn-primary">
+            Cargar alumnos
+          </button>
+          <button type="button" class="btn btn-primary" id="abrirInsertar">
+            Insertar nuevo
+          </button>
+          <button type="button" class="btn btn-primary" id="subir">
+            Subir imagen
+          </button>
         </div>
-       
+      </div>
+      <div class="col-6 d-flex justify-content-end align-items-center">
+        <button id="google_signout" class="btn mr-3">Cerrar sesión</button>
+      </div>
+    </div>
 
-        <table id="tablaAlumnos" class="table">
+    <table id="tablaAlumnos" class="table"></table>
+    <!-- /****************  VENTANA MODAL ***************/ -->
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Alumno</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
 
-        </table> 
-        <!-- /****************  VENTANA MODAL ***************/ -->
-        <!-- The Modal -->
-        <div class="modal" id="myModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">Alumno</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div id="formulario">
-                            <div id="divId"><p>Id: <input type="text" name="id" id="id" readonly=""></p></div>
-                            <p>Nombre:<input type="text" name="nombre" id="nombre"></p>
-                            <p>Apellido:<input type="text" name="apellido" id="apellido"></p>
-                            <p>Asignatura:<input type="text" name="asignatura" id="asignatura"></p> 
-                        </div>
-                        
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button id="btnInsertar" class="btn btn-primary">Insertar</button>
-                        <button id="btnActualizar" class="btn btn-primary">Actualizar</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                    </div>
-
-                </div>
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div id="formulario">
+              <div id="divId">
+                <p>Id: <input type="text" name="id" id="id" readonly="" /></p>
+              </div>
+              <p>Nombre:<input type="text" name="nombre" id="nombre" /></p>
+              <p>
+                Apellidos:<input type="text" name="apellidos" id="apellidos" />
+              </p>
+              <p>Email:<input type="email" name="email" id="email" /></p>
+              <p>
+                Contraseña:<input
+                  type="password"
+                  name="password"
+                  id="password"
+                />
+              </p>
+              <p>
+                Asignatura:<input
+                  type="text"
+                  name="asignatura"
+                  id="asignatura"
+                />
+              </p>
             </div>
-        </div>
+          </div>
 
-        <!-- /****************  VENTANA MODAL ***************/ -->
-        <script src="funciones.js"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    </body>
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button id="btnInsertar" class="btn btn-primary">Insertar</button>
+            <button id="btnActualizar" class="btn btn-primary">
+              Actualizar
+            </button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- /****************  VENTANA MODAL ***************/ -->
+    <script src="funciones.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      let button = document.getElementById("google_signout");
+      button.onclick = () => {
+        google.accounts.id.disableAutoSelect();
+        google.accounts.id.revoke(localStorage.getItem("email"));
+        localStorage.clear();
+        window.location.href = "index.html";
+      };
+      document.getElementById("subir").onclick = () => {
+          window.location.href = "subir.html"
+      }
+    </script>
+  </body>
+</html>
