@@ -8,6 +8,7 @@ document
 
 //acciones
 document.getElementById("btnInsertar").addEventListener("click", insertaAlumno);
+document.getElementById("btnInsertar").addEventListener("click", subirImagen);
 document
   .getElementById("btnActualizar")
   .addEventListener("click", actualizaAlumno);
@@ -122,7 +123,8 @@ function cargaAlumnos() {
 
         tabla.appendChild(fila);
       } //fin de for
-    }).catch((error) => alert(error));
+    })
+    .catch((error) => alert(error));
 }
 
 function cargaAlumnoPorId(id) {
@@ -174,8 +176,8 @@ function actualizaAlumno() {
       }
     })
     .then((json) => {
-        console.log(json);
-        cargaAlumnos();
+      console.log(json);
+      cargaAlumnos();
     })
     .catch((error) => alert(error));
   cargaAlumnos();
@@ -189,6 +191,7 @@ function insertaAlumno() {
       apellidos: document.getElementById("apellidos").value,
       email: document.getElementById("email").value,
       asignatura: document.getElementById("asignatura").value,
+      imagen:document.getElementById("imagen").value
     }),
     headers: myHeaders,
   })
@@ -200,11 +203,10 @@ function insertaAlumno() {
       }
     })
     .then((json) => {
-        console.log(json);
-        cargaAlumnos();
+      console.log(json);
+      cargaAlumnos();
     })
     .catch((error) => alert(error));
-  
 }
 
 function borraAlumnoPorId(id) {
@@ -221,8 +223,21 @@ function borraAlumnoPorId(id) {
       }
     })
     .then((json) => {
-        console.log(json);
-        cargaAlumnos();
+      console.log(json);
+      cargaAlumnos();
     })
     .catch((error) => alert(error));
+}
+/* subir */
+function subirImagen() {
+  var input = document.querySelector('input[type="file"]');
+  var data = new FormData();
+  data.append("imagen", input.files[0]);
+  fetch(getAbsolutePath() + "subir/", {
+    method: "POST",
+    body: data,
+    headers: myHeaders,
+  })
+    .then((response) => response.json())
+    .then((json) => (document.getElementById("msg").innerHTML = json.msg));
 }
