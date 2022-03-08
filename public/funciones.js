@@ -18,7 +18,6 @@ function abrirInsertar(){
     document.getElementById("apellidos").value = "";
     document.getElementById("asignatura").value = "";
     document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
 }
 
 function getAbsolutePath() {
@@ -51,9 +50,11 @@ function cargaAlumnos() {
                 let columnaNombre = document.createElement("th");
                 columnaNombre.textContent = "NOMBRE";
                 let columnaApellido = document.createElement("th");
-                columnaApellido.textContent = "APELLIDO";
+                columnaApellido.textContent = "APELLIDOS";
                 let columnaAsig = document.createElement("th");
                 columnaAsig.textContent = "ASIGNATURA";
+                let columnaEmail = document.createElement("th");
+                columnaEmail.textContent = "EMAIL";
                 let gestion = document.createElement("th");
                 gestion.textContent = "GESTION";
                 gestion.colSpan="2";
@@ -62,6 +63,7 @@ function cargaAlumnos() {
                 filaTitulos.appendChild(columnaNombre);
                 filaTitulos.appendChild(columnaApellido);
                 filaTitulos.appendChild(columnaAsig);
+                filaTitulos.appendChild(columnaEmail);
                 filaTitulos.appendChild(gestion);
                 tabla.appendChild(filaTitulos);
                 
@@ -73,19 +75,20 @@ function cargaAlumnos() {
                     let celdaNombre = document.createElement("td");
                     celdaNombre.textContent = json[i].nombre;
                     let celdaApellido = document.createElement("td");
-                    celdaApellido.textContent = json[i].apellido;
+                    celdaApellido.textContent = json[i].apellidos;
                     let celdaAsignatura = document.createElement("td");
                     celdaAsignatura.textContent = json[i].asignatura;
-
+                    let celdaEmail = document.createElement("td");
+                    celdaEmail.textContent = json[i].email;
                     let celdaActualizar = document.createElement("td");
                     let botonActualizar = document.createElement("button");
-                    botonActualizar.setAttribute("onclick", "cargaAlumnoPorId(" + json[i].id + ")");
+                    botonActualizar.setAttribute("onclick", "cargaAlumnoPorId('" + json[i].id + "')");
                     celdaActualizar.appendChild(botonActualizar);
                     botonActualizar.textContent = "Actualizar";
                     
                     let celdaBorrar = document.createElement("td");
                     let botonBorrar = document.createElement("button");
-                    botonBorrar.setAttribute("onclick", "borraAlumnoPorId(" + json[i].id + ")");
+                    botonBorrar.setAttribute("onclick", "borraAlumnoPorId('" + json[i].id + "')");
                     celdaBorrar.appendChild(botonBorrar);
                     botonBorrar.textContent = "Borrar";
 
@@ -93,6 +96,7 @@ function cargaAlumnos() {
                     fila.appendChild(celdaNombre);
                     fila.appendChild(celdaApellido);
                     fila.appendChild(celdaAsignatura);
+                    fila.appendChild(celdaEmail);
                     fila.appendChild(celdaBorrar);
                     fila.appendChild(celdaActualizar);
 
@@ -114,7 +118,8 @@ function cargaAlumnoPorId(id) {
                 document.getElementById("formulario").style.display = "block";
                 document.getElementById("id").value = json.id;
                 document.getElementById("nombre").value = json.nombre;
-                document.getElementById("apellido").value = json.apellido;
+                document.getElementById("apellidos").value = json.apellidos;
+                document.getElementById("email").value = json.email;
                 document.getElementById("asignatura").value = json.asignatura;
             })
     $("#myModal").modal('show');
@@ -126,11 +131,13 @@ function cargaAlumnoPorId(id) {
 
 function actualizaAlumno() {
     let id = document.getElementById("id").value;
+    console.log(id)
     fetch(getAbsolutePath()+'alumno/' +id, {
         method: 'PUT',
         body: JSON.stringify({
             nombre: document.getElementById("nombre").value,
-            apellido: document.getElementById("apellido").value,
+            apellidos: document.getElementById("apellidos").value,
+            email: document.getElementById("email").value,
             asignatura: document.getElementById("asignatura").value,
         }),
         headers: myHeaders,
@@ -147,7 +154,6 @@ function insertaAlumno() {
             nombre: document.getElementById("nombre").value,
             apellidos: document.getElementById("apellidos").value,
             email:document.getElementById("email").value,
-            password:document.getElementById("password").value,
             asignatura: document.getElementById("asignatura").value,
         }),
         headers: myHeaders,
@@ -159,6 +165,7 @@ function insertaAlumno() {
 
 
 function borraAlumnoPorId(id) {
+    console.log(id);
     fetch(getAbsolutePath()+'alumno/' + id, {
         
         method: 'DELETE',

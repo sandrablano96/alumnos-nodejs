@@ -3,6 +3,7 @@ require('dotenv').config();
 const { dbConnection } = require('../database/config')
 const {validationResult, check} = require('express-validator');
 const Alumno = require('./alumno');
+const Usuario = require('./usuario');
 const port = process.env.PORT;
 const bcryptjs = require('bcryptjs');
 
@@ -11,7 +12,12 @@ const fileUpload = require('express-fileupload');
 const { generarJWT } = require('../helpers/generarJWT')
 const { validarJWT } = require('../middleware/validar-JWT');
 
+var options = {
+    index: "login.html"
+  };
+  
 class Server{
+    
     constructor(){
         this.app = express();
         this.conectarDB();
@@ -21,7 +27,7 @@ class Server{
 
     middlewares(){
         this.app.use(express.json());
-        this.app.use(express.static('public'));
+        this.app.use(express.static('public', options));
         this.app.use(fileUpload({
             useTempFiles: true,
             tempFileDir: '/tmp/'
@@ -51,27 +57,26 @@ class Server{
                 const email = payload.email;
                 const nombre = payload.given_name;
                 const apellidos = payload.family_name;
-                let alumno = await Alumno.findOne({ email });
+                let usuario = await Usuario.findOne({ email });
                 const salt = bcryptjs.genSaltSync();
-                if (!alumno) {
+                if (!usuario) {
                     let data = {
                         nombre,
                         apellidos,
                         email,
                         password: bcryptjs.hashSync("1234", salt),
-                        asignatura: "todas",
                         google: true,
                     }
-                    console.log('Nuevo alumno:', data);
-                    alumno = new Alumno(data);
-                    await alumno.save();
-                    console.log('creado', alumno)
+                    console.log('Nuevo usuario:', data);
+                    usuario = new Usuario(data);
+                    await usuario.save();
+                    console.log('creado', usuario)
                 }
-                const tokenGenerado = await generarJWT(alumno.id);
+                const tokenGenerado = await generarJWT(usuario.id);
                 res.json({
                     msg: "Todo bien con google",
                     token:tokenGenerado,
-                    alumno
+                    usuario
                 })
             } catch(error){
                 res.json({
@@ -92,14 +97,14 @@ class Server{
                 const { email, password } = req.body;
                 try {
                     //verificar si existe
-                    const alumno = await Alumno.findOne({ email });
-                    if (!alumno) {
+                    const usuario = await Usuario.findOne({ email });
+                    if (!usuario) {
                         res.status(400).json({
                             msg: "El correo no existe",
                             email
                         })
                     } else {
-                        const validPassword = bcryptjs.compareSync(password, alumno.password);
+                        const validPassword = bcryptjs.compareSync(password, usuario.password);
                         if (!validPassword) {
                             res.status(400).json({
                                 msg: "El password no es correcto"
@@ -135,7 +140,6 @@ class Server{
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
         check('apellidos', 'El apellido es obligatorio').not().isEmpty(),
         check('email', 'El email es obligatorio').isEmail().not().isEmpty(),
-        check('password', 'La contraseña es obligatoria').not().isEmpty(),
          async function(req,res){
             
             const body = req.body;
@@ -146,13 +150,7 @@ class Server{
                 return res.status(400).json({"msg": errorVal.array()})
                 //"msg":errorVal.array(); devuelve informacion de los errores
             } 
-            let alumno = new Alumno();
-            const salt = bcryptjs.genSaltSync();
-            alumno.nombre = body.nombre;
-            alumno.apellidos = body.apellidos;
-            alumno.email = body.email;
-            alumno.asignatura = body.asignatura;
-            alumno.password = bcryptjs.hashSync(body.password, salt)
+            let alumno = new Alumno(body);
             alumno.save();
             res.json({
                 insertado:true,
@@ -181,24 +179,23 @@ class Server{
         });
     
 
-    this.app.post("/subir", async function (req, res) {
+    this.app.post("/subir",validarJWT, async function (req, res) {
         if (!req.files) {
             res.status(400).json({
                 msg: "No se ha seleccionado un archivo"
             });
             return;
         }
-        //esperamos un archivo con el nombre archivo
         if (!req.files.imagen) {
             res.status(400).json({
-                msg: "No se ha seleccionado un archivo con nombre 'archivo'"
+                msg: "No se ha seleccionado un archivo con nombre 'imagen'"
             });
         } else {
             const imagen = req.files.imagen;
             let path = require('path');
             const nombreCortado = imagen.name.split('.');
             const extension = nombreCortado[nombreCortado.length - 1];
-            const extensionesValidas = ['jpg', 'png', 'jpeg'];
+            const extensionesValidas = ['jpg', 'png', 'jpeg', 'PNG', 'png'];
             if (!extensionesValidas.includes(extension)) {
                 return res.status(400).json({
                     msg: `La extension ${extension} no es valida`
@@ -209,7 +206,7 @@ class Server{
                 if (err) {
                     return res.status(500).send(err);
                 }
-                res.send('Subido correctamente');
+                res.json({msg:'Subido correctamente'});
             });
         }
     });

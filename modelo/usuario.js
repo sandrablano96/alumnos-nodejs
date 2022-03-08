@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const AlumnoSchema = mongoose.Schema(
+const UsuarioSchema = mongoose.Schema(
 {
     nombre: {
         type:String,
@@ -13,12 +13,10 @@ const AlumnoSchema = mongoose.Schema(
         type:String,
         required: [true,'El email es obligatorio']
     }, 
-    asignatura: {
+    password:{
         type:String,
-    }, 
-    imagen: {
-        type:String,
-    }, 
+        required: [true,'La contraseña es obligatoria']
+    },
     google: {
         type: Boolean,
         default:true
@@ -26,11 +24,11 @@ const AlumnoSchema = mongoose.Schema(
 }
 )
 
-AlumnoSchema.methods.toJSON = function() {
-    const { _id,...alumno} = this.toObject() ;
-    alumno.id=_id;
-    return alumno;
+UsuarioSchema.methods.toJSON = function() {
+    const { _id,...usuario} = this.toObject() ;
+    usuario.id=_id;
+    return usuario;
 }
 
-let Alumno = mongoose.model('Alumno',AlumnoSchema);
-module.exports = Alumno;
+let Usuario = mongoose.model('Usuario',UsuarioSchema);
+module.exports = Usuario;

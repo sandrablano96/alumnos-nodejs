@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p id="msg"></p>
+    <form action="" method="post" enctype="multipart/form-data" id="formulario">
+        <input type="file" id="imagen" name="imagen">
+        <button id="enviar" type="button">Enviar</button>
+    </form>
+    <script>
+    document.getElementById("enviar").addEventListener("click", subirImagen);
+    
+    const myHeaders = new Headers();
+        myHeaders.append('x-token', localStorage.getItem("token"));
+
+    
+    function subirImagen(evt){
+        var input = document.querySelector('input[type="file"]');
+        var data = new FormData();
+        data.append('imagen', input.files[0]);
+        fetch(getAbsolutePath()+'subir/', {
+        method: 'POST',
+        body: data,
+        headers: myHeaders,
+        })
+            .then((response) => response.json())
+            .then((json) => document.getElementById("msg").innerHTML = json.msg);
+            
+        }
+    function getAbsolutePath() {
+        var loc = window.location;
+        var pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1);
+        return loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length));
+    }
+        
+    </script>
+</body>
+</html>
