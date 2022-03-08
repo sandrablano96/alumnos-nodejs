@@ -11,7 +11,12 @@ const fileUpload = require('express-fileupload');
 const { generarJWT } = require('../helpers/generarJWT')
 const { validarJWT } = require('../middleware/validar-JWT');
 
+var options = {
+    index: "login.html"
+  };
+  
 class Server{
+    
     constructor(){
         this.app = express();
         this.conectarDB();
@@ -21,7 +26,7 @@ class Server{
 
     middlewares(){
         this.app.use(express.json());
-        this.app.use(express.static('public'));
+        this.app.use(express.static('public', options));
         this.app.use(fileUpload({
             useTempFiles: true,
             tempFileDir: '/tmp/'
@@ -197,7 +202,7 @@ class Server{
             let path = require('path');
             const nombreCortado = imagen.name.split('.');
             const extension = nombreCortado[nombreCortado.length - 1];
-            const extensionesValidas = ['jpg', 'png', 'jpeg'];
+            const extensionesValidas = ['jpg', 'png', 'jpeg', 'PNG', 'png'];
             if (!extensionesValidas.includes(extension)) {
                 return res.status(400).json({
                     msg: `La extension ${extension} no es valida`
@@ -208,7 +213,7 @@ class Server{
                 if (err) {
                     return res.status(500).send(err);
                 }
-                res.send('Subido correctamente');
+                res.json({msg:'Subido correctamente'});
             });
         }
     });
