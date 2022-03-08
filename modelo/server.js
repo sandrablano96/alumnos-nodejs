@@ -110,7 +110,7 @@ class Server{
                                 msg: "El password no es correcto"
                             })
                         } else {
-                            const token = await generarJWT(alumno.id);
+                            const token = await generarJWT(usuario.id);
                             res.json({
                                 msg: "Login ok",
                                 token
@@ -157,6 +157,7 @@ class Server{
                 alumno
             })
         });
+
         this.app.put('/alumno/:id',
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
         check('apellido', 'El apellido es obligatorio').not().isEmpty(),validarJWT, 
