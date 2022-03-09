@@ -13,7 +13,7 @@
         <button id="enviar" type="button">Enviar</button>
     </form>
     <script>
-    document.getElementById("enviar").addEventListener("click", subirImagen);
+    document.getElementById("imagen").addEventListener("change", subirImagen);
     
     const myHeaders = new Headers();
         myHeaders.append('x-token', localStorage.getItem("token"));
@@ -23,6 +23,7 @@
         var input = document.querySelector('input[type="file"]');
         var data = new FormData();
         data.append('imagen', input.files[0]);
+        
         fetch(getAbsolutePath()+'subir/', {
         method: 'POST',
         body: data,

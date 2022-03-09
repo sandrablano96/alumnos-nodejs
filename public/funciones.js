@@ -8,10 +8,7 @@ document
 
 //acciones
 document.getElementById("btnInsertar").addEventListener("click", insertaAlumno);
-document.getElementById("btnInsertar").addEventListener("click", subirImagen);
-document
-  .getElementById("btnActualizar")
-  .addEventListener("click", actualizaAlumno);
+document.getElementById("btnActualizar").addEventListener("click", actualizaAlumno);
 
 function abrirInsertar() {
   $("#myModal").modal("show");
@@ -177,10 +174,11 @@ function actualizaAlumno() {
     })
     .then((json) => {
       console.log(json);
+      subirImagen();
       cargaAlumnos();
     })
     .catch((error) => alert(error));
-  cargaAlumnos();
+
 }
 
 function insertaAlumno() {
@@ -204,6 +202,7 @@ function insertaAlumno() {
     })
     .then((json) => {
       console.log(json);
+      subirImagen();
       cargaAlumnos();
     })
     .catch((error) => alert(error));

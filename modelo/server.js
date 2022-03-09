@@ -207,6 +207,9 @@ class Server{
                 if (err) {
                     return res.status(500).send(err);
                 }
+                let alumno = await Alumno.findById(req.body.id);
+                alumno.imagen = imagen.name;
+                alumno.save();
                 res.json({msg:'Subido correctamente'});
             });
         }
