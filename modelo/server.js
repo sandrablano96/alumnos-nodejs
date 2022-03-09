@@ -203,7 +203,7 @@ class Server{
                 })
             }
             let uploadPath = path.join(__dirname, '../img', imagen.name);
-            imagen.mv(uploadPath, function (err) {
+            imagen.mv(uploadPath, async function (err) {
                 if (err) {
                     return res.status(500).send(err);
                 }
