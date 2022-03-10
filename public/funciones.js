@@ -7,7 +7,7 @@ document
   .addEventListener("click", cargaAlumnos);
 
 //acciones
-document.getElementById("btnInsertar").addEventListener("click", insertaAlumno);
+
 document.getElementById("btnActualizar").addEventListener("click", actualizaAlumno);
 
 function abrirInsertar() {
@@ -180,27 +180,29 @@ function actualizaAlumno() {
     .catch((error) => alert(error));
 
 }
+
+//vinculo los eventos
 document.getElementById('imagen').addEventListener('change', event => {
   handleImageUpload(event)
 })
+document.getElementById("btnInsertar").addEventListener("click", insertaAlumno);
+
 let files;
+
 const handleImageUpload = event => {
   files = event.target.files;
 }
 
 function insertaAlumno() {
   const formData = new FormData();
-  formData.append
-  ('nombre', document.getElementById("nombre").value);
-  formData.append
-  ('apellidos', document.getElementById("apellidos").value);
-  formData.append
-  ('email', document.getElementById("email").value);
-  formData.append
-  ('asignatura', document.getElementById("asignatura").value);
-  formData.append('imagen', files[0]);
+            formData.append('nombre', document.getElementById('nombre').value);
+            formData.append('apellidos', document.getElementById('apellidos').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('asignatura', document.getElementById('asignatura').value);
+            formData.append('imagen', files[0]);
 
-  fetch(getAbsolutePath() + "subir2/", {
+
+  fetch(getAbsolutePath() + "subir2", {
     method: "POST",
     body: formData,
     headers: myHeaders,
