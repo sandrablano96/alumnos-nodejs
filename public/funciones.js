@@ -180,17 +180,29 @@ function actualizaAlumno() {
     .catch((error) => alert(error));
 
 }
+document.getElementById('imagen').addEventListener('change', event => {
+  handleImageUpload(event)
+})
+let files;
+const handleImageUpload = event => {
+  files = event.target.files;
+}
 
 function insertaAlumno() {
-  fetch(getAbsolutePath() + "alumno/", {
+  const formData = new FormData();
+  formData.append
+  ('nombre', document.getElementById("nombre").value);
+  formData.append
+  ('apellidos', document.getElementById("apellidos").value);
+  formData.append
+  ('email', document.getElementById("email").value);
+  formData.append
+  ('asignatura', document.getElementById("asignatura").value);
+  formData.append('imagen', files[0]);
+
+  fetch(getAbsolutePath() + "subir2/", {
     method: "POST",
-    body: JSON.stringify({
-      nombre: document.getElementById("nombre").value,
-      apellidos: document.getElementById("apellidos").value,
-      email: document.getElementById("email").value,
-      asignatura: document.getElementById("asignatura").value,
-      imagen:document.getElementById("imagen").value
-    }),
+    body: formData,
     headers: myHeaders,
   })
     .then((response) => {

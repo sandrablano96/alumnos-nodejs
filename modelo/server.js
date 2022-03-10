@@ -214,6 +214,61 @@ class Server{
             });
         }
     });
+
+    this.app.post(
+        "/subir2",
+        async function (req, res) {
+          if (!req.files ){
+            res.status(400).json({
+              msg: "no se han mandado archivos"    
+            });
+          }
+         
+          //esperamos un archivo con el nombre de 'archivo'
+          //SI SE HA ENVIADO ARCHIVO
+          if (!req.files.imagen ){
+            res.status(400).json({
+              msg: "no se han mandado 'imagen'"    
+            });
+          } else { //SI se ha enviado 'archivo'
+            const  { imagen } = req.files;
+            const nombreCortado = imagen.name.split(".");
+            const extension = nombreCortado[nombreCortado.length -1];
+            //validar la extensión
+            const extensionesValidas = ['jpg','jpeg','png','gif'];
+            if ( !extensionesValidas.includes(extension)){
+              return res.status(400).json({
+                msg: `La extensión ${extension} no está permitida ${extensionesValidas}`
+              })
+            }
+            const nombreTemporal = uuidv4() +'.' + extension;
+            //una vez que tiene el nombre del archivo temporal crea el objeto producto y lo guarda
+            const nombre = req.body.nombre;
+            const apellidos = req.body.apellidos;
+            const email = req.body.email;
+            const asignatura = req.body.asignatura;
+            const imagenTemp = nombreTemporal;
+            const alumno = {nombre,apellidos,email, asignatura, imagenTemp}
+            console.log(alumno);
+            let alumnoNuevo = new Alumno(alumno);
+            alumnoNuevo.save();
+            //FIN DE LO QUE SE HA AÑADIDO A LA RUTA SUBIR
+            const path = require('path');
+            const uploadPath = path.join(__dirname,'../img',nombreTemporal);
+            archivo.mv(uploadPath, function(err){
+              if ( err ) {
+                return res.status(500).json(err);
+              }
+              res.status(200).json({
+                msg:'Archivo subido con éxito',
+                uploadPath
+              
+              })
+            })
+   
+          }
+        })
+  
 }
     listen(){
         this.app.listen(port, function() { 
