@@ -18,10 +18,6 @@ const AlumnoSchema = mongoose.Schema(
     }, 
     imagen: {
         type:String,
-    }, 
-    google: {
-        type: Boolean,
-        default:true
     }
 }
 )

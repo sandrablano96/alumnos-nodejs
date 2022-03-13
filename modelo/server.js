@@ -11,6 +11,7 @@ const { OAuth2Client } = require('google-auth-library');
 const fileUpload = require('express-fileupload');
 const { generarJWT } = require('../helpers/generarJWT')
 const { validarJWT } = require('../middleware/validar-JWT');
+const { v4: uuidv4 } = require('uuid');
 
 var options = {
     index: "login.html"
@@ -136,7 +137,7 @@ class Server{
             let alumno = await Alumno.findById(id);
             res.json(alumno);
         })
-        this.app.post('/alumno',
+        /*this.app.post('/alumno',
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
         check('apellidos', 'El apellido es obligatorio').not().isEmpty(),
         check('email', 'El email es obligatorio').isEmail().not().isEmpty(),
@@ -157,19 +158,58 @@ class Server{
                 alumno
             })
         });
-
+        */
         this.app.put('/alumno/:id',
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
         check('apellido', 'El apellido es obligatorio').not().isEmpty(),validarJWT, 
         async function(req,res){
-            const body = req.body;
-            const id = req.params.id;
-            await Alumno.findByIdAndUpdate(id,body);
-            let alumno = await Alumno.findById(id);
-            res.json({
-                actualizado:true,
-                alumno
-            })
+            if (!req.files ){
+                res.status(400).json({
+                  msg: "no se han mandado archivos"    
+                });
+              }
+             
+              //esperamos un archivo con el nombre de 'archivo'
+              //SI SE HA ENVIADO ARCHIVO
+              if (!req.files.imagen ){
+                res.status(400).json({
+                  msg: "no se han mandado 'imagen'"    
+                });
+              } else {
+                console.log("dentro");
+                const  { imagen } = req.files;
+                const nombreCortado = imagen.name.split(".");
+                const extension = nombreCortado[nombreCortado.length -1];
+                //validar la extensión
+                const extensionesValidas = ['jpg','jpeg','png','PNG'];
+                if ( !extensionesValidas.includes(extension)){
+                  return res.status(400).json({
+                    msg: `La extensión ${extension} no está permitida ${extensionesValidas}`
+                  })
+                }
+                const nombreTemporal = uuidv4() +'.' + extension;
+                const nombre = req.body.nombre;
+                const apellidos = req.body.apellidos;
+                const email = req.body.email;
+                const asignatura = req.body.asignatura;
+                let nuevosDatos = {nombre,apellidos,email, asignatura, imagen:nombreTemporal};
+                const id = req.params.id;
+                await Alumno.findByIdAndUpdate(id, nuevosDatos);
+                let alumno = await Alumno.findById(id);
+                const path = require('path');
+                const uploadPath = path.join(__dirname,'../public/img',nombreTemporal);
+                imagen.mv(uploadPath, function(err){
+                  if ( err ) {
+                    return res.status(500).json(err);
+                  }
+                  res.status(200).json({
+                    msg:'Subido correctamente',
+                    alumno
+                  
+                  })
+                }); //SI se ha enviado 'archivo'
+                
+              }
         });
         this.app.delete('/alumno/:id',validarJWT, async function(req,res){
             const id = req.params.id;
@@ -179,7 +219,7 @@ class Server{
             })
         });
     
-
+/*
     this.app.post("/subir",validarJWT, async function (req, res) {
         if (!req.files) {
             res.status(400).json({
@@ -207,14 +247,11 @@ class Server{
                 if (err) {
                     return res.status(500).send(err);
                 }
-                let alumno = await Alumno.findById(req.body.id);
-                alumno.imagen = imagen.name;
-                alumno.save();
                 res.json({msg:'Subido correctamente'});
             });
         }
     });
-
+*/
     this.app.post(
         "/subir2",
         async function (req, res) {
@@ -231,11 +268,12 @@ class Server{
               msg: "no se han mandado 'imagen'"    
             });
           } else { //SI se ha enviado 'archivo'
+            console.log("dentro")
             const  { imagen } = req.files;
             const nombreCortado = imagen.name.split(".");
             const extension = nombreCortado[nombreCortado.length -1];
             //validar la extensión
-            const extensionesValidas = ['jpg','jpeg','png','gif'];
+            const extensionesValidas = ['jpg','jpeg','png','PNG'];
             if ( !extensionesValidas.includes(extension)){
               return res.status(400).json({
                 msg: `La extensión ${extension} no está permitida ${extensionesValidas}`
@@ -247,21 +285,24 @@ class Server{
             const apellidos = req.body.apellidos;
             const email = req.body.email;
             const asignatura = req.body.asignatura;
-            const imagenTemp = nombreTemporal;
-            const alumno = {nombre,apellidos,email, asignatura, imagenTemp}
-            console.log(alumno);
-            let alumnoNuevo = new Alumno(alumno);
+            let alumnoNuevo = new Alumno();
+            alumnoNuevo.nombre = nombre;
+            alumnoNuevo.apellidos = apellidos;
+            alumnoNuevo.email = email;
+            alumnoNuevo.asignatura = asignatura;
+            alumnoNuevo.imagen = nombreTemporal;
             alumnoNuevo.save();
+            console.log(alumnoNuevo)
             //FIN DE LO QUE SE HA AÑADIDO A LA RUTA SUBIR
             const path = require('path');
-            const uploadPath = path.join(__dirname,'../img',nombreTemporal);
-            archivo.mv(uploadPath, function(err){
+            const uploadPath = path.join(__dirname,'../public/img',nombreTemporal);
+            imagen.mv(uploadPath, function(err){
               if ( err ) {
                 return res.status(500).json(err);
               }
               res.status(200).json({
-                msg:'Archivo subido con éxito',
-                uploadPath
+                msg:'Subido correctamente',
+                alumnoNuevo
               
               })
             })

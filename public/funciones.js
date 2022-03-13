@@ -1,3 +1,5 @@
+
+
 //mostrar info
 document
   .getElementById("abrirInsertar")
@@ -35,7 +37,7 @@ function getAbsolutePath() {
 
 const myHeaders = new Headers();
 
-myHeaders.append("Content-Type", "application/json");
+
 myHeaders.append("x-token", localStorage.getItem("token"));
 
 function cargaAlumnos() {
@@ -58,6 +60,8 @@ function cargaAlumnos() {
         tabla.removeChild(tabla.firstChild);
       }
       let filaTitulos = document.createElement("tr");
+      let columnaImagen = document.createElement("th");
+      columnaImagen.textContent = "IMAGEN"
       let columnaId = document.createElement("th");
       columnaId.textContent = "ID";
       let columnaNombre = document.createElement("th");
@@ -73,6 +77,7 @@ function cargaAlumnos() {
       gestion.colSpan = "2";
       gestion.style.textAlign = "center";
       filaTitulos.appendChild(columnaId);
+      filaTitulos.appendChild(columnaImagen);
       filaTitulos.appendChild(columnaNombre);
       filaTitulos.appendChild(columnaApellido);
       filaTitulos.appendChild(columnaAsig);
@@ -84,6 +89,12 @@ function cargaAlumnos() {
         let fila = document.createElement("tr");
         let celdaId = document.createElement("td");
         celdaId.textContent = json[i].id;
+        let celdaImagen = document.createElement("td");
+        let imagen = document.createElement("img");
+        imagen.setAttribute("src", "img/" + json[i].imagen)
+        imagen.setAttribute("width", "50px");
+        imagen.setAttribute("height", "50px");
+        celdaImagen.appendChild(imagen);
         let celdaNombre = document.createElement("td");
         celdaNombre.textContent = json[i].nombre;
         let celdaApellido = document.createElement("td");
@@ -111,6 +122,7 @@ function cargaAlumnos() {
         botonBorrar.textContent = "Borrar";
 
         fila.appendChild(celdaId);
+        fila.appendChild(celdaImagen);
         fila.appendChild(celdaNombre);
         fila.appendChild(celdaApellido);
         fila.appendChild(celdaAsignatura);
@@ -155,14 +167,16 @@ function cargaAlumnoPorId(id) {
 function actualizaAlumno() {
   let id = document.getElementById("id").value;
   console.log(id);
+  const formData = new FormData();
+  var imagen = document.querySelector('input[type="file"]');
+            formData.append('imagen', imagen.files[0]);
+            formData.append('nombre', document.getElementById('nombre').value);
+            formData.append('apellidos', document.getElementById('apellidos').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('asignatura', document.getElementById('asignatura').value);
   fetch(getAbsolutePath() + "alumno/" + id, {
     method: "PUT",
-    body: JSON.stringify({
-      nombre: document.getElementById("nombre").value,
-      apellidos: document.getElementById("apellidos").value,
-      email: document.getElementById("email").value,
-      asignatura: document.getElementById("asignatura").value,
-    }),
+    body: formData,
     headers: myHeaders,
   })
     .then((response) => {
@@ -174,7 +188,6 @@ function actualizaAlumno() {
     })
     .then((json) => {
       console.log(json);
-      subirImagen();
       cargaAlumnos();
     })
     .catch((error) => alert(error));
@@ -182,26 +195,22 @@ function actualizaAlumno() {
 }
 
 //vinculo los eventos
-document.getElementById('imagen').addEventListener('change', event => {
-  handleImageUpload(event)
-})
+
 document.getElementById("btnInsertar").addEventListener("click", insertaAlumno);
 
-let files;
-
-const handleImageUpload = event => {
-  files = event.target.files;
-}
 
 function insertaAlumno() {
   const formData = new FormData();
+  var imagen = document.querySelector('input[type="file"]');
+            formData.append('imagen', imagen.files[0]);
             formData.append('nombre', document.getElementById('nombre').value);
             formData.append('apellidos', document.getElementById('apellidos').value);
             formData.append('email', document.getElementById('email').value);
             formData.append('asignatura', document.getElementById('asignatura').value);
-            formData.append('imagen', files[0]);
 
-
+           /* for(var pair of formData.entries()) {
+              console.log(pair[0]+', '+pair[1]);
+            }*/
   fetch(getAbsolutePath() + "subir2", {
     method: "POST",
     body: formData,
@@ -216,7 +225,6 @@ function insertaAlumno() {
     })
     .then((json) => {
       console.log(json);
-      subirImagen();
       cargaAlumnos();
     })
     .catch((error) => alert(error));
@@ -241,16 +249,4 @@ function borraAlumnoPorId(id) {
     })
     .catch((error) => alert(error));
 }
-/* subir */
-function subirImagen() {
-  var input = document.querySelector('input[type="file"]');
-  var data = new FormData();
-  data.append("imagen", input.files[0]);
-  fetch(getAbsolutePath() + "subir/", {
-    method: "POST",
-    body: data,
-    headers: myHeaders,
-  })
-    .then((response) => response.json())
-    .then((json) => (document.getElementById("msg").innerHTML = json.msg));
-}
+
